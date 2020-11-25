@@ -14,39 +14,35 @@ library(abind)
 library(doParallel)
 
 source("quickstop.R")
+source("bivariateBeta.R")
 source("perm_test_funs.R")
 
 alpha <- 0.001
 
 
-
-#' Simulate Power of CI at differentiating bivariate normal nulls and alternates on noised data
+#' Simulate Power of CI at differentiating bivariate beta nulls and alternates 
 #' 
 #' This code runs with a doParallel backend. Please set one up prior 
 #' to running code. 
 #' 
-#' @param exp_CI the expected alternate CI
+#' @param rho the expected alternate pearson
+#' @param shape the shape parameters for the marginals (currently symetric)
 #' @param N Sample size for samples from null or alt
 #' @param sampleN How many times to resample/simulate
 #' @param delta_vector Vector of delta values for rCI 
 #' @param propTrue If only interested in power, can set to 1 for all to be Alternates. Otherwise, can investigate FDR as well. 
-runPowerNormalNull <- function(exp_CI = 0.6, 
+runPowerBetaNull <- function(rho = 0.6, shape = c(10,1),
                            N = 50, 
                            sampleN = 1000, 
                            delta_vector = seq(0, 1, by = .05), 
                            propTrue=1, req_alpha=0.001){
-  tau = 2*exp_CI - 1
-  rho <- sin((pi*tau)/(2))
   
-  altSigma <- c(1,rho,rho,1)
-  dim(altSigma) <- c(2,2)
-  
-  nullSigma <- c(1,0,0,1)
-  dim(nullSigma) <- c(2,2)
+  samplePars <- optimizeShapeForPearson(rho, shape, shape)
+
   
 
   res <- foreach(i = seq_len(sampleN), 
-                 .export=c("delta_vector", "nullSigma", "altSigma", "propTrue", "N", "req_alpha")) %dopar% {
+                 .export=c("delta_vector", "nullSigma", "altSigma", "propTrue", "N", "req_alpha", "samplePars")) %dopar% {
     # if(i %% 10 == 0){print(i)}
     suppressMessages(require(MASS, quietly = TRUE, warn.conflicts = FALSE))
     require(wCI, quietly = TRUE, warn.conflicts = FALSE)
@@ -60,7 +56,7 @@ runPowerNormalNull <- function(exp_CI = 0.6,
     
     if(runif(1) < propTrue){
       truth <- rep(1, times=length(delta_vector))
-      sample_mat <- mvrnorm(n = N, mu = c(0,0), Sigma = altSigma)
+      sample_mat <- rbivariateBeta(n = N, samplePars)
       
       x <- sample_mat[,1]
       y <- sample_mat[,2]
@@ -102,51 +98,22 @@ runPowerNormalNull <- function(exp_CI = 0.6,
 
 registerDoParallel(40)
 
-expcis <- seq(0.5, 0.7, .01)
+exprho <- seq(0, 0.5, .01)
 nsamples_loop <- c(20, 50)
-list_mat <- matrix(list(), nrow = length(expcis), ncol=length(nsamples_loop), dimnames = list(expcis, nsamples_loop))
-for(nsamples in nsamples_loop[2]){
-  for(eci in expcis){
-    print(c(eci, nsamples))
-    test <- runPowerNormalNull(exp_CI = eci, N = nsamples,sampleN=1000, delta_vector = c(0, 0.5, 1), req_alpha = alpha)
-    
+list_mat <- matrix(list(), nrow = length(exprho), ncol=length(nsamples_loop), dimnames = list(exprho, nsamples_loop))
+for(nsamples in nsamples_loop){
+  for(erho in exprho){
+    print(c(erho, nsamples))
+    test <- runPowerBetaNull(rho = erho, N = nsamples,sampleN=1000, delta_vector = c(0, 0.13), req_alpha = alpha)
+        test <- runPowerBetaNull(rho = erho, N = nsamples,sampleN=100, delta_vector = c(0, 0.13), req_alpha = alpha)
 
-    list_mat[as.character(eci), as.character(nsamples)] <- list(test)
+
+    list_mat[as.character(erho), as.character(nsamples)] <- list(test)
     save(list_mat, file="normal_dist_power_analysis.RData")
 
   }
 }
 
-expcis <- seq(0.7, 0.9, .01)
-nsamples_loop <- c(20, 50)
-list_mat_extension <- matrix(list(), nrow = length(expcis), ncol=length(nsamples_loop), dimnames = list(expcis, nsamples_loop))
-for(nsamples in nsamples_loop){
-  for(eci in expcis){
-    print(c(eci, nsamples))
-    test <- runPowerNormalNull(exp_CI = eci, N = nsamples,sampleN=1000, delta_vector = c(0, 0.5, 1), req_alpha = alpha)
-    
-
-    list_mat_extension[as.character(eci), as.character(nsamples)] <- list(test)
-    save(list_mat_extension, file="normal_dist_power_analysis_extension.RData")
-
-  }
-}
-
-expcis <- seq(0.5, 0.7, .01)
-nsamples_loop <- c(100, 200)
-list_mat <- matrix(list(), nrow = length(expcis), ncol=length(nsamples_loop), dimnames = list(expcis, nsamples_loop))
-for(nsamples in nsamples_loop){
-  for(eci in expcis){
-    print(c(eci, nsamples))
-    test <- runPowerNormalNull(exp_CI = eci, N = nsamples,sampleN=1000, delta_vector = c(0, 0.5, 1), req_alpha = alpha)
-    
-
-    list_mat[as.character(eci), as.character(nsamples)] <- list(test)
-   save(list_mat, file="normal_dist_power_analysis_larger.RData")
-
-  }
-}
-load("normal_dist_power_analysis.RData")
 
 n50 <- list_mat[,"50"]
 # n50 <- lapply(n50, unlist, recursive=FALSE)
