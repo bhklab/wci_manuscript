@@ -26,6 +26,9 @@ rCI.perm.test <- function(x, y, delta, req_alpha, outties = 1L){
                           pyties = as.integer(outties), plogic = 1L)
     t0 <- t0res[1]/(t0res[1] + t0res[2])
 
+
+    ## This function returns T or F depending on whether the permutation was larger than the observed statistic
+    ## It saves the x and y variables in its closure, and does the resampling using "sample"
     sampleFun <- function(){
       y <- sample(y)
       t <- NaN
