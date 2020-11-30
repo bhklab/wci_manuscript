@@ -147,8 +147,10 @@ for(nsamples in nsamples_loop){
   }
 }
 load("normal_dist_power_analysis.RData")
+load("normal_dist_power_analysis_extension.RData")
 
-n50 <- list_mat[,"50"]
+
+n50 <- c(list_mat[,"50"], list_mat_extension[,"50"])
 # n50 <- lapply(n50, unlist, recursive=FALSE)
 n50 <- lapply(n50, abind, along=-1)
 
@@ -189,11 +191,11 @@ toPlot <- melt(n50_power[,,"1"])
 colnames(toPlot) <- c("Effect Size", "Method", "Power")
 library(ggplot2)
 
-pres_ready <- theme_classic() + 
+pres_ready <- theme_bw() + 
   theme(axis.title = element_text(size=24), axis.text = element_text(size=24), legend.text = element_text(size=24), title = element_text(size=28),legend.key.height = unit(1.0, 'cm'))
 
 pdf("power_gaussian_with_pearson_delta_1.pdf", height = 6, width=9)
-ggplot(toPlot, aes(x=`Effect Size`, y=Power, col=Method)) + geom_line(size=1.5) + ggtitle(paste0("N=50, Delta = 1, alpha = ", alpha)) + pres_ready
+ggplot(toPlot, aes(x=`Effect Size`, y=Power, col=Method)) + geom_line(size=1) + ggtitle(paste0("N=50, Delta = 1, alpha = ", alpha)) + pres_ready
 dev.off()
 
 

@@ -31,7 +31,7 @@ alpha <- 0.001
 #' @param sampleN How many times to resample/simulate
 #' @param delta_vector Vector of delta values for rCI 
 #' @param propTrue If only interested in power, can set to 1 for all to be Alternates. Otherwise, can investigate FDR as well. 
-runPowerBetaNull <- function(rho = 0.6, shape = c(10,1),
+runPowerBetaNull <- function(rho = 0.6, shape = c(1,10),
                            N = 50, 
                            sampleN = 1000, 
                            delta_vector = seq(0, 1, by = .05), 
@@ -99,25 +99,43 @@ runPowerBetaNull <- function(rho = 0.6, shape = c(10,1),
 registerDoParallel(40)
 
 exprho <- seq(0, 0.5, .01)
-nsamples_loop <- c(20, 50)
+nsamples_loop <- c(100)
 list_mat <- matrix(list(), nrow = length(exprho), ncol=length(nsamples_loop), dimnames = list(exprho, nsamples_loop))
 for(nsamples in nsamples_loop){
   for(erho in exprho){
     print(c(erho, nsamples))
-    test <- runPowerBetaNull(rho = erho, N = nsamples,sampleN=1000, delta_vector = c(0, 0.13), req_alpha = alpha)
-        test <- runPowerBetaNull(rho = erho, N = nsamples,sampleN=100, delta_vector = c(0, 0.13), req_alpha = alpha)
+    test <- runPowerBetaNull(rho = erho, N = nsamples, sampleN=1000, delta_vector = c(0, 0.13), req_alpha = alpha)
 
 
     list_mat[as.character(erho), as.character(nsamples)] <- list(test)
-    save(list_mat, file="normal_dist_power_analysis.RData")
+    save(list_mat, file="beta_1_10_dist_power_analysis.RData")
 
   }
 }
 
 
-n50 <- list_mat[,"50"]
-# n50 <- lapply(n50, unlist, recursive=FALSE)
-n50 <- lapply(n50, abind, along=-1)
+exprho <- seq(0, 0.5, .01)
+nsamples_loop <- c(100)
+list_mat <- matrix(list(), nrow = length(exprho), ncol=length(nsamples_loop), dimnames = list(exprho, nsamples_loop))
+for(nsamples in nsamples_loop){
+  for(erho in exprho){
+    print(c(erho, nsamples))
+    test <- runPowerBetaNull(rho = erho, N = nsamples, shape = c(1.2, 4.5) ,sampleN=1000, delta_vector = c(0, 0.13), req_alpha = alpha)
+
+
+    list_mat[as.character(erho), as.character(nsamples)] <- list(test)
+    save(list_mat, file="beta_1_2__4_5_dist_power_analysis.RData")
+
+  }
+}
+
+
+
+load("beta_1_10_dist_power_analysis.RData")
+
+n100 <- list_mat[,"100"]
+# n100 <- lapply(n100, unlist, recursive=FALSE)
+n100 <- lapply(n100, abind, along=-1)
 
 contingency_helper <- function(x1, x2){
   
@@ -130,7 +148,7 @@ contingency_helper <- function(x1, x2){
   return(resTbl)
 }
 
-n50_power <- lapply(n50, function(x) {
+n100_power <- lapply(n100, function(x) {
   x[,,2:5] <- apply(x[,,2:5], c(1,2,3), function(x) (as.numeric(x < alpha)))
   powers <- sapply(dimnames(x)[[2]], function(xx){
 
@@ -149,87 +167,87 @@ n50_power <- lapply(n50, function(x) {
   return(powers)
 })
 
-n50_power <- abind(n50_power, along = -1)
+n100_power <- abind(n100_power, along = -1)
 library(reshape2)
 
-toPlot <- melt(n50_power[,,"1"])
+toPlot <- melt(n100_power[,,"0.13"])
 colnames(toPlot) <- c("Effect Size", "Method", "Power")
 library(ggplot2)
 
 pres_ready <- theme_classic() + 
   theme(axis.title = element_text(size=24), axis.text = element_text(size=24), legend.text = element_text(size=24), title = element_text(size=28),legend.key.height = unit(1.0, 'cm'))
 
-pdf("power_gaussian_with_pearson_delta_1.pdf", height = 6, width=9)
-ggplot(toPlot, aes(x=`Effect Size`, y=Power, col=Method)) + geom_line(size=1.5) + ggtitle(paste0("N=50, Delta = 1, alpha = ", alpha)) + pres_ready
+pdf("power_beta_1_10_with_pearson_delta_0_13.pdf", height = 6, width=9)
+ggplot(toPlot, aes(x=`Effect Size`, y=Power, col=Method)) + geom_line(size=1.5) + ggtitle(paste0("N=100, Delta = 0.13, alpha = ", alpha)) + pres_ready
 dev.off()
 
 
 
-toPlot <- melt(n50_power[,,"0"])
-colnames(toPlot) <- c("Effect Size", "Method", "Power")
+# toPlot <- melt(n50_power[,,"0"])
+# colnames(toPlot) <- c("Effect Size", "Method", "Power")
 
-library(ggplot2)
-pdf("power_gaussian_with_pearson_delta_0.pdf", height = 6, width=9)
-ggplot(toPlot, aes(x=`Effect Size`, y=Power, col=Method)) + geom_line(size=1.5) + ggtitle(paste0("N=50, Delta = 0, alpha = ", alpha)) + pres_ready
-dev.off()
+# library(ggplot2)
+# pdf("power_gaussian_with_pearson_delta_0.pdf", height = 6, width=9)
+# ggplot(toPlot, aes(x=`Effect Size`, y=Power, col=Method)) + geom_line(size=1.5) + ggtitle(paste0("N=50, Delta = 0, alpha = ", alpha)) + pres_ready
+# dev.off()
 
 
-n20 <- list_mat[,"20"]
-# n20 <- lapply(n20, unlist, recursive=FALSE)
-n20 <- lapply(n20, abind, along=-1)
+# n20 <- list_mat[,"20"]
+# # n20 <- lapply(n20, unlist, recursive=FALSE)
+# n20 <- lapply(n20, abind, along=-1)
 
-contingency_helper <- function(x1, x2){
+# contingency_helper <- function(x1, x2){
   
-  resTbl <- matrix(0, nrow=2, ncol=2)
-  dimnames(resTbl) <- list(c("0", "1"), c("0","1"))
-  resTbl["0","0"] <- sum(x1==0 & x2==0)
-  resTbl["0","1"] <- sum(x1==0 & x2==1)
-  resTbl["1","0"] <- sum(x1==1 & x2==0)
-  resTbl["1","1"] <- sum(x1==1 & x2==1)
-  return(resTbl)
-}
+#   resTbl <- matrix(0, nrow=2, ncol=2)
+#   dimnames(resTbl) <- list(c("0", "1"), c("0","1"))
+#   resTbl["0","0"] <- sum(x1==0 & x2==0)
+#   resTbl["0","1"] <- sum(x1==0 & x2==1)
+#   resTbl["1","0"] <- sum(x1==1 & x2==0)
+#   resTbl["1","1"] <- sum(x1==1 & x2==1)
+#   return(resTbl)
+# }
 
-n20_power <- lapply(n20, function(x) {
-  x[,,2:5] <- apply(x[,,2:5], c(1,2,3), function(x) (as.numeric(x < alpha)))
-  powers <- sapply(dimnames(x)[[2]], function(xx){
+# n20_power <- lapply(n20, function(x) {
+#   x[,,2:5] <- apply(x[,,2:5], c(1,2,3), function(x) (as.numeric(x < alpha)))
+#   powers <- sapply(dimnames(x)[[2]], function(xx){
 
-      conf_mat_CI <- contingency_helper(x[,xx,"Alternative"],x[,xx,"CI_p"])
-      conf_mat_rCI <- contingency_helper(x[,xx,"Alternative"],x[,xx,"rCI_p"])
-      conf_mat_pearson <- contingency_helper(x[,xx,"Alternative"],x[,xx,"Pearson_p"])
-      conf_mat_spearman <- contingency_helper(x[,xx,"Alternative"],x[,xx,"Spearman_p"])
-      # browser()
-      pow_CI <- conf_mat_CI["1","1"]/sum(conf_mat_CI["1",])
-      pow_rCI <- conf_mat_rCI["1","1"]/sum(conf_mat_rCI["1",])
-      pow_pearson <- conf_mat_pearson["1","1"]/sum(conf_mat_pearson["1",])
-      pow_spearman <- conf_mat_spearman["1","1"]/sum(conf_mat_spearman["1",])
+#       conf_mat_CI <- contingency_helper(x[,xx,"Alternative"],x[,xx,"CI_p"])
+#       conf_mat_rCI <- contingency_helper(x[,xx,"Alternative"],x[,xx,"rCI_p"])
+#       conf_mat_pearson <- contingency_helper(x[,xx,"Alternative"],x[,xx,"Pearson_p"])
+#       conf_mat_spearman <- contingency_helper(x[,xx,"Alternative"],x[,xx,"Spearman_p"])
+#       # browser()
+#       pow_CI <- conf_mat_CI["1","1"]/sum(conf_mat_CI["1",])
+#       pow_rCI <- conf_mat_rCI["1","1"]/sum(conf_mat_rCI["1",])
+#       pow_pearson <- conf_mat_pearson["1","1"]/sum(conf_mat_pearson["1",])
+#       pow_spearman <- conf_mat_spearman["1","1"]/sum(conf_mat_spearman["1",])
       
-      return(c("CI_power" = pow_CI, "rCI_power" = pow_rCI, "pearson_power" = pow_pearson, "spearman_power" = pow_spearman))
-    })
-  return(powers)
-})
+#       return(c("CI_power" = pow_CI, "rCI_power" = pow_rCI, "pearson_power" = pow_pearson, "spearman_power" = pow_spearman))
+#     })
+#   return(powers)
+# })
 
-n20_power <- abind(n20_power, along = -1)
-library(reshape2)
+# n20_power <- abind(n20_power, along = -1)
+# library(reshape2)
 
-toPlot <- melt(n20_power[,,"1"])
-colnames(toPlot) <- c("Effect Size", "Method", "Power")
-library(ggplot2)
+# toPlot <- melt(n20_power[,,"1"])
+# colnames(toPlot) <- c("Effect Size", "Method", "Power")
+# library(ggplot2)
 
-pres_ready <- theme_classic() + 
-  theme(axis.title = element_text(size=24), axis.text = element_text(size=24), legend.text = element_text(size=24), title = element_text(size=28),legend.key.height = unit(1.0, 'cm'))
+# pres_ready <- theme_classic() + 
+#   theme(axis.title = element_text(size=24), axis.text = element_text(size=24), legend.text = element_text(size=24), title = element_text(size=28),legend.key.height = unit(1.0, 'cm'))
 
-pdf("power_gaussian_with_pearson_delta_1_n20.pdf", height = 6, width=9)
-ggplot(toPlot, aes(x=`Effect Size`, y=Power, col=Method)) + geom_line(size=1.5) + ggtitle(paste0("N=20, Delta = 1, alpha = ", alpha)) + pres_ready
-dev.off()
+# pdf("power_gaussian_with_pearson_delta_1_n20.pdf", height = 6, width=9)
+# ggplot(toPlot, aes(x=`Effect Size`, y=Power, col=Method)) + geom_line(size=1.5) + ggtitle(paste0("N=20, Delta = 1, alpha = ", alpha)) + pres_ready
+# dev.off()
 
 
 
-toPlot <- melt(n20_power[,,"0"])
-colnames(toPlot) <- c("Effect Size", "Method", "Power")
+# toPlot <- melt(n20_power[,,"0"])
+# colnames(toPlot) <- c("Effect Size", "Method", "Power")
 
-library(ggplot2)
-pdf("power_gaussian_with_pearson_delta_0.pdf", height = 6, width=9)
-ggplot(toPlot, aes(x=`Effect Size`, y=Power, col=Method)) + geom_line(size=1.5) + ggtitle(paste0("N=200, Delta = 0, alpha = ", alpha)) + pres_ready
-dev.off()
+# library(ggplot2)
+# pdf("power_gaussian_with_pearson_delta_0.pdf", height = 6, width=9)
+# ggplot(toPlot, aes(x=`Effect Size`, y=Power, col=Method)) + geom_line(size=1.5) + ggtitle(paste0("N=200, Delta = 0, alpha = ", alpha)) + pres_ready
+# dev.off()
 
-                                                                                  
+#                                                                                   
