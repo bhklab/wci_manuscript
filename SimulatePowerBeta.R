@@ -102,9 +102,11 @@ runPowerBetaNull <- function(rho = 0.6, shape = c(1,10),
 
 registerDoParallel(40)
 
-exprho <- seq(0, 0.5, .01)
+exprho <- seq(0.31, 0.5, .01)
 nsamples_loop <- c(100)
 list_mat <- matrix(list(), nrow = length(exprho), ncol=length(nsamples_loop), dimnames = list(exprho, nsamples_loop))
+if(file.exists("beta_1_10_dist_power_analysis_withkci.RData")) load("beta_1_10_dist_power_analysis_withkci.RData")
+
 for(nsamples in nsamples_loop){
   for(erho in exprho){
     print(c(erho, nsamples))
@@ -112,7 +114,7 @@ for(nsamples in nsamples_loop){
 
 
     list_mat[as.character(erho), as.character(nsamples)] <- list(test)
-    save(list_mat, file="beta_1_10_dist_power_analysis.RData")
+    save(list_mat, file="beta_1_10_dist_power_analysis_withkci.RData")
 
   }
 }
@@ -122,7 +124,8 @@ exprho <- seq(0, 0.5, .01)
 nsamples_loop <- c(100)
 list_mat <- matrix(list(), nrow = length(exprho), ncol=length(nsamples_loop), dimnames = list(exprho, nsamples_loop))
 
-if(file.exists("beta_1_2__4_5_dist_power_analysis.RData")) load("beta_1_2__4_5_dist_power_analysis.RData")
+if(file.exists("beta_1_2__4_5_dist_power_analysis_withkci.RData")) load("beta_1_2__4_5_dist_power_analysis_withkcismirnov96
+  .RData")
 
 
 for(nsamples in nsamples_loop){
@@ -132,7 +135,7 @@ for(nsamples in nsamples_loop){
 
 
     list_mat[as.character(erho), as.character(nsamples)] <- list(test)
-    save(list_mat, file="beta_1_2__4_5_dist_power_analysis.RData")
+    save(list_mat, file="beta_1_2__4_5_dist_power_analysis_withkci.RData")
 
   }
 }
