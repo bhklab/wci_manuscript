@@ -51,3 +51,28 @@ rCI.perm.test <- function(x, y, delta, req_alpha, outties = 1L){
 
     return(c(list(t0 = t0), p.value))
 }
+
+
+kCI.perm.test <- function(x, y, req_alpha) {
+
+  t0res <- wCI:::KCI(as.numeric(x), as.numeric(y), 
+                          as.numeric(length(x)), 
+                          psymmetric = 1L, pkern1 = -27.5512, pkern2 = 0.8000)
+    t0 <- t0res[1]/(t0res[1] + t0res[2])
+
+    sampleFun <- function(){
+          y <- sample(y)
+          t <- NaN
+ 
+          tres <- wCI:::KCI(as.numeric(x), as.numeric(y), 
+                          as.numeric(length(x)), 
+                          psymmetric = 1L, pkern1 = -27.5512, pkern2 = 0.8000)
+          t <- tres[1]/(tres[1] + tres[2])
+
+          return(abs(t-0.5) > abs(t0 - 0.5))
+        }
+    p.value <- quickstop(sampleFun, req_alpha = req_alpha)
+
+    return(c(list(t0 = t0), p.value))
+}
+
