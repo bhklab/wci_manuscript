@@ -58,7 +58,7 @@ runPowerNormalNull <- function(rho,#exp_CI = 0.6,
     
     spearman_p <- numeric(length(delta_vector))
     
-    if(n >=500){
+    if(N >=500){
       rCI.perm.test <- rCI.perm.test.large
     }
 
@@ -107,11 +107,30 @@ runPowerNormalNull <- function(rho,#exp_CI = 0.6,
 registerDoParallel(40)
 
 exprhos <- seq(0.0, 0.5, .01)
-nsamples_loop <- c(50, 100)
+#nsamples_loop <- c(100)
+#list_mat <- matrix(list(), nrow = length(exprhos), ncol=length(nsamples_loop), dimnames = list(exprhos, nsamples_loop))
+
+
+#if(file.exists("normal_dist_power_analysis_rho_n_100_deltasearch.RData")) load("normal_dist_power_analysis_rho_n_100_deltasearch.RData")
+
+#for(nsamples in nsamples_loop[1]){
+#  for(rho in exprhos){
+#    print(c(rho, nsamples))
+#    test <- runPowerNormalNull(rho = rho, N = nsamples,sampleN=1000, delta_vector = c(0, 0.5, 1, 1.5, 2), req_alpha = alpha)
+    
+
+#    list_mat[as.character(rho), as.character(nsamples)] <- list(test)
+#    save(list_mat, file="normal_dist_power_analysis_rho_n_100_deltasearch.RData")
+
+#  }
+#}
+
+
+nsamples_loop <- c(1000)
 list_mat <- matrix(list(), nrow = length(exprhos), ncol=length(nsamples_loop), dimnames = list(exprhos, nsamples_loop))
 
 
-if(file.exists("normal_dist_power_analysis_rho_n_50_deltasearch.RData")) load("normal_dist_power_analysis_rho_n_50_deltasearch.RData")
+if(file.exists("normal_dist_power_analysis_rho_n_1000_deltasearch.RData")) load("normal_dist_power_analysis_rho_n_1000_deltasearch.RData")
 
 for(nsamples in nsamples_loop[1]){
   for(rho in exprhos){
@@ -120,10 +139,12 @@ for(nsamples in nsamples_loop[1]){
     
 
     list_mat[as.character(rho), as.character(nsamples)] <- list(test)
-    save(list_mat, file="normal_dist_power_analysis_rho_n_50_deltasearch.RData")
+    save(list_mat, file="normal_dist_power_analysis_rho_n_1000_deltasearch.RData")
 
   }
 }
+
+
 
 # exprhos <- seq(0.7, 0.9, .01)
 # nsamples_loop <- c(20, 50)
