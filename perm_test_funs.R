@@ -61,7 +61,7 @@ rCI.perm.test.large <- function(x, y, delta, req_alpha, outties = 1L){
                           as.integer(length(x)), 
                           as.integer(outties), 
                           as.integer(outties))
-    t0 <- t0res[1]
+    t0 <- t0res[[1]]
 
     ## This function returns T or F depending on whether the permutation was larger than the observed statistic
     ## It saves the x and y variables in its closure, and does the resampling using "sample"
@@ -75,7 +75,7 @@ rCI.perm.test.large <- function(x, y, delta, req_alpha, outties = 1L){
                           as.integer(length(x)), 
                           as.integer(outties), 
                           as.integer(outties))
-        t <- tres[1]
+        t <- tres[[1]]
         if(is.nan(t)) stop("T is nan")
       }
       ## sampling from only the permutations where I can calculate rCI
