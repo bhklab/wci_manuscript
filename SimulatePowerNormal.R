@@ -58,6 +58,10 @@ runPowerNormalNull <- function(rho,#exp_CI = 0.6,
     
     spearman_p <- numeric(length(delta_vector))
     
+    if(n >=500){
+      rCI.perm.test <- rCI.perm.test.large
+    }
+
     if(runif(1) < propTrue){
       truth <- rep(1, times=length(delta_vector))
       sample_mat <- mvrnorm(n = N, mu = c(0,0), Sigma = altSigma)
@@ -152,6 +156,8 @@ for(nsamples in nsamples_loop[1]){
 # }
 # load("normal_dist_power_analysis.RData")
 # load("normal_dist_power_analysis_extension.RData")
+
+
 
 
 # n50 <- c(list_mat[,"50"], list_mat_extension[,"50"])
