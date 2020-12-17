@@ -58,7 +58,7 @@ runPowerNormalNull <- function(rho,#exp_CI = 0.6,
     
     spearman_p <- numeric(length(delta_vector))
     
-    if(n >=500){
+    if(N >=500){
       rCI.perm.test <- rCI.perm.test.large
     }
 

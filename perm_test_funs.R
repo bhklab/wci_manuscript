@@ -56,11 +56,11 @@ rCI.perm.test <- function(x, y, delta, req_alpha, outties = 1L){
 rCI.perm.test.large <- function(x, y, delta, req_alpha, outties = 1L){
     outties <- as.integer(!outties)
     t0res <- wCI:::frCI(as.numeric(x), as.numeric(y), 
-                          pdeltaX = as.numeric(delta), 
-                          pdeltaY = as.numeric(delta), 
+                          as.numeric(delta), 
+                          as.numeric(delta), 
                           as.integer(length(x)), 
-                          pxties = as.integer(outties), 
-                          pyties = as.integer(outties))
+                          as.integer(outties), 
+                          as.integer(outties))
     t0 <- t0res[1]
 
     ## This function returns T or F depending on whether the permutation was larger than the observed statistic
@@ -70,11 +70,11 @@ rCI.perm.test.large <- function(x, y, delta, req_alpha, outties = 1L){
       t <- NaN
       while(is.nan(t)){
         tres <- wCI:::frCI(as.numeric(x), as.numeric(y), 
-                          pdeltaX = as.numeric(delta), 
-                          pdeltaY = as.numeric(delta), 
+                          as.numeric(delta), 
+                          as.numeric(delta), 
                           as.integer(length(x)), 
-                          pxties = as.integer(outties), 
-                          pyties = as.integer(outties))
+                          as.integer(outties), 
+                          as.integer(outties))
         t <- tres[1]
         if(is.nan(t)) stop("T is nan")
       }
