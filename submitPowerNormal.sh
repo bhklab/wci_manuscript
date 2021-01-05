@@ -5,7 +5,7 @@
 #SBATCH --nodes=1
 #SBATCH --array=0#-1000#0-816
 #SBATCH --ntasks-per-node=40
-#SBATCH --time=12:00:00
+#SBATCH --time=48:00:00
 #SBATCH --output=/cluster/projects/bhklab/tmp/psmirnov_scratch/runRCIPowerNormal_%A_%a.log   # Standard output and error log
 #SBATCH --mem=60GB
 #SBATCH -p superhimem
