@@ -12,7 +12,7 @@ library(iterators)
 library(mvtnorm)
 library(abind)
 library(doParallel)
-
+library(doFuture)
 source("quickstop.R")
 source("perm_test_funs.R")
 
@@ -30,27 +30,31 @@ alpha <- 0.001
 #' @param sampleN How many times to resample/simulate
 #' @param delta_vector Vector of delta values for rCI 
 #' @param propTrue If only interested in power, can set to 1 for all to be Alternates. Otherwise, can investigate FDR as well. 
-runPowerNormalNull <- function(rho,#exp_CI = 0.6, 
-                           N = 50, 
+runPowerNormalNull <- function(rhos,#exp_CI = 0.6, 
+                           Ns = c(50), 
                            sampleN = 1000, 
                            delta_vector = seq(0, 1, by = .05), 
                            propTrue=1, req_alpha=0.001){
   # tau = 2*exp_CI - 1
   # rho <- sin((pi*tau)/(2))
   
-  altSigma <- c(1,rho,rho,1)
-  dim(altSigma) <- c(2,2)
-  
-  nullSigma <- c(1,0,0,1)
-  dim(nullSigma) <- c(2,2)
   
 
-  res <- foreach(i = seq_len(sampleN), 
+  res <- foreach(rho = rhos) %:% foreach(N = Ns) %:% foreach(i = seq_len(sampleN), 
                  .export=c("delta_vector", "nullSigma", "altSigma", "propTrue", "N", "req_alpha")) %dopar% {
     # if(i %% 10 == 0){print(i)}
     suppressMessages(require(MASS, quietly = TRUE, warn.conflicts = FALSE))
     require(wCI, quietly = TRUE, warn.conflicts = FALSE)
     require(rmutil, quietly = TRUE, warn.conflicts = FALSE)
+
+
+    altSigma <- c(1,rho,rho,1)
+    dim(altSigma) <- c(2,2)
+    
+    nullSigma <- c(1,0,0,1)
+    dim(nullSigma) <- c(2,2)
+
+
     ci_p <- numeric(length(delta_vector))
     mci_p <- numeric(length(delta_vector))
     pearson_p <- numeric(length(delta_vector))
@@ -105,22 +109,28 @@ runPowerNormalNull <- function(rho,#exp_CI = 0.6,
 }
 
 registerDoParallel(40)
+# registerDoFuture()
+# plan(multicore)
 
 exprhos <- seq(0.0, 0.5, .01)
-nsamples_loop <- c(50, 100)
+nsamples_loop <- c(100, 200, 500)
+
+test <- runPowerNormalNull(exprhos,nsamples_loop, sampleN=1000, c(0, 0.5, 1, 1.5, 2), req_alpha = alpha)
+
+
 list_mat <- matrix(list(), nrow = length(exprhos), ncol=length(nsamples_loop), dimnames = list(exprhos, nsamples_loop))
 
 
-if(file.exists("normal_dist_power_analysis_rho_n_50_deltasearch.RData")) load("normal_dist_power_analysis_rho_n_50_deltasearch.RData")
+if(file.exists("test_normal_dist_power_analysis_rho_n_100_500_deltasearch.RData")) load("test_normal_dist_power_analysis_rho_n_100_500_deltasearch.RData")
 
 for(nsamples in nsamples_loop[1]){
   for(rho in exprhos){
     print(c(rho, nsamples))
-    test <- runPowerNormalNull(rho = rho, N = nsamples,sampleN=1000, delta_vector = c(0, 0.5, 1, 1.5, 2, 2.5), req_alpha = alpha)
+    test <- runPowerNormalNull(rho = rho, N = nsamples,sampleN=10, delta_vector = c(0, 0.5, 1, 1.5, 2, 2.5), req_alpha = alpha)
     
 
     list_mat[as.character(rho), as.character(nsamples)] <- list(test)
-    save(list_mat, file="normal_dist_power_analysis_rho_n_50_deltasearch.RData")
+    save(list_mat, file="test_normal_dist_power_analysis_rho_n_100_500_deltasearch.RData")
 
   }
 }
