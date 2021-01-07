@@ -112,7 +112,7 @@ registerDoParallel(40)
 # registerDoFuture()
 # plan(multicore)
 
-exprhos <- seq(0.0, 0.5, .01)
+# exprhos <- seq(0.0, 0.5, .01)
 
 #nsamples_loop <- c(100)
 #list_mat <- matrix(list(), nrow = length(exprhos), ncol=length(nsamples_loop), dimnames = list(exprhos, nsamples_loop))
@@ -132,12 +132,12 @@ exprhos <- seq(0.0, 0.5, .01)
 #  }
 #}
 
-
+exprhos <- c(0.2, 0.3, .4)
 nsamples_loop <- c(100)
 list_mat <- matrix(list(), nrow = length(exprhos), ncol=length(nsamples_loop), dimnames = list(exprhos, nsamples_loop))
 
 
-if(file.exists("normal_dist_power_analysis_rho_n_100_deltasearch.RData")) load("normal_dist_power_analysis_rho_n_100_deltasearch.RData")
+if(file.exists("normal_dist_power_analysis_rho_n_100_deltafinemap.RData")) load("normal_dist_power_analysis_rho_n_100_deltafinemap.RData")
 
 for(nsamples in nsamples_loop[1]){
   for(rho in exprhos){
@@ -147,7 +147,7 @@ for(nsamples in nsamples_loop[1]){
     
 
     list_mat[as.character(rho), as.character(nsamples)] <- list(test)
-    save(list_mat, file="normal_dist_power_analysis_rho_n_100_deltasearch.RData")
+    save(list_mat, file="normal_dist_power_analysis_rho_n_100_deltafinemap.RData")
   }
 }
 
