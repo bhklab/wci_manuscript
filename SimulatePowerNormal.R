@@ -12,7 +12,6 @@ library(iterators)
 library(mvtnorm)
 library(abind)
 library(doParallel)
-library(doFuture)
 source("quickstop.R")
 source("perm_test_funs.R")
 
