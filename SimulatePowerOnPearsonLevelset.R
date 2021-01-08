@@ -12,7 +12,7 @@ exprhos <- sapply(nsamples_loop, function(n) {
 	pwr.r.test(n, sig.level=alpha, power=0.5)$r
 
 
-}
+})
 
 list_mat <- matrix(list(), nrow = length(exprhos), ncol=length(nsamples_loop), dimnames = list(exprhos, nsamples_loop))
 
