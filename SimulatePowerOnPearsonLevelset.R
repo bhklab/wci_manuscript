@@ -14,19 +14,23 @@ exprhos <- sapply(nsamples_loop, function(n) {
 
 })
 
-list_mat <- matrix(list(), nrow = length(exprhos), ncol=length(nsamples_loop), dimnames = list(exprhos, nsamples_loop))
+list_mat <- list()
 
 
 if(file.exists("normal_dist_power_analysis_delta_1_0_fixed_pearson_power_0_5.RData")) load("normal_dist_power_analysis_delta_1_0_fixed_pearson_power_0_5.RData")
 
-for(nsamples in nsamples_loop[1]){
-  for(rho in exprhos){
+for(ii in seq_along(nsamples_loop)){
+
+	rho <- exprhos[ii]
+	nsamples <- nsamples_loop[ii]
+
     print(c(rho, nsamples))
+
+
 
     test <- runPowerNormalNull(rho = rho, N = nsamples,sampleN=10000, delta_vector = c(1), req_alpha = alpha)
     
 
-    list_mat[as.character(rho), as.character(nsamples)] <- list(test)
-    save(list_mat, file="normal_dist_power_analysis_delta_1_0_fixed_pearson_power_0_5.RData")
-  }
+    list_mat[ii] <- list(test)
+    save(list_mat, nsamples_loop, exprhos, file="normal_dist_power_analysis_delta_1_0_fixed_pearson_power_0_5.RData")
 }
