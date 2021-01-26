@@ -7,27 +7,27 @@ library(abind)
 library(doParallel)
 source("quickstop.R")
 source("perm_test_funs.R")
-
+source("SimulatePowerNormal.R4")
 alpha <- 0.001
 
-registerDoParallel(40)
+registerDoParallel(20)
 
-exprhos <- c(0.2, 0.3, .4)
+exprhos <- seq(0,0.5,0.01)
 nsamples_loop <- c(100)
 list_mat <- matrix(list(), nrow = length(exprhos), ncol=length(nsamples_loop), dimnames = list(exprhos, nsamples_loop))
 
 
-if(file.exists("normal_dist_power_analysis_rho_n_100_deltafinemap.RData")) load("normal_dist_power_analysis_rho_n_100_deltafinemap.RData")
+if(file.exists("normal_dist_power_analysis_n_100_withkendall.RData")) load("normal_dist_power_analysis_n_100_withkendall.RData")
 
-for(nsamples in nsamples_loop[1]){
+for(nsamples in nsamples_loop){
   for(rho in exprhos){
     print(c(rho, nsamples))
 
-    test <- runPowerNormalNull(rho = rho, N = nsamples,sampleN=10000, delta_vector = c(0, 0.5, seq(0.6, 1.4, .1), 1.5, 2), req_alpha = alpha)
+    test <- runPowerNormalNull(rho = rho, N = nsamples, sampleN=1000, delta_vector = c(1), req_alpha = alpha)
     
 
     list_mat[as.character(rho), as.character(nsamples)] <- list(test)
-    save(list_mat, file="normal_dist_power_analysis_rho_n_100_deltafinemap.RData")
+    save(list_mat, file="normal_dist_power_analysis_n_100_withkendall.RData")
   }
 }
 

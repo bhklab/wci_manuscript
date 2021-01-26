@@ -59,7 +59,8 @@ runPowerNormalNull <- function(rhos,#exp_CI = 0.6,
     
     
     spearman_p <- numeric(length(delta_vector))
-    
+    kendall_p <- numeric(length(delta_vector))
+
     if(N >=500){
       rCI.perm.test <- rCI.perm.test.large
     }
@@ -79,6 +80,7 @@ runPowerNormalNull <- function(rhos,#exp_CI = 0.6,
     }
     pearson_p_1 <- pearson.perm.test(x,y,req_alpha = req_alpha)$p.value
     spearman_p_1 <- cor.test(x, y, method="spearman")$p.value
+    kendall_p_1 <- cor.test(x,y, method="kendall")$p.value
     ci_p_1 <- rCI.perm.test(x, y, 0, req_alpha)$p.value
     for(j in seq_along(delta_vector)){
       sgm <- delta_vector[j]
@@ -94,12 +96,14 @@ runPowerNormalNull <- function(rhos,#exp_CI = 0.6,
 
       pearson_p[j] <- pearson_p_1
       spearman_p[j] <- spearman_p_1
+      kendall_p[j] <- kendall_p_1
+
       
     }
 
 
-    res <- cbind(truth, ci_p, mci_p, pearson_p, spearman_p)
-    colnames(res) <- c("Alternative", "CI_p", "rCI_p", "Pearson_p", "Spearman_p")
+    res <- cbind(truth, ci_p, mci_p, pearson_p, spearman_p, kendall_p)
+    colnames(res) <- c("Alternative", "CI_p", "rCI_p", "Pearson_p", "Spearman_p", "Kendall_p")
     rownames(res) <- delta_vector
     res
   }
