@@ -3,6 +3,7 @@ alpha <- 0.001
 
 source("SimulatePowerNormal.R")
 
+registerDoParallel(80)
 
 nsamples_loop <- c(50,100,150,200,250,300)
 
@@ -17,7 +18,7 @@ exprhos <- sapply(nsamples_loop, function(n) {
 list_mat <- list()
 
 
-if(file.exists("normal_dist_power_analysis_delta_1_0_fixed_pearson_power_0_5.RData")) load("normal_dist_power_analysis_delta_1_0_fixed_pearson_power_0_5.RData")
+if(file.exists("normal_dist_power_analysis_delta_1_0_fixed_pearson_power_0_5_large.RData")) load("normal_dist_power_analysis_delta_1_0_fixed_pearson_power_0_5_large.RData")
 
 for(ii in seq_along(nsamples_loop)){
 
@@ -32,5 +33,5 @@ for(ii in seq_along(nsamples_loop)){
     
 
     list_mat[ii] <- list(test)
-    save(list_mat, nsamples_loop, exprhos, file="normal_dist_power_analysis_delta_1_0_fixed_pearson_power_0_5.RData")
+    save(list_mat, nsamples_loop, exprhos, file="normal_dist_power_analysis_delta_1_0_fixed_pearson_power_0_5_large.RData")
 }
