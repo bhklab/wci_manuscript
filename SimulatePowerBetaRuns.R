@@ -12,7 +12,7 @@ source("SimulatePowerBeta.R")
 alpha <- 0.001
 
 
-registerDoParallel(80)
+registerDoParallel(40)
 
 
 
