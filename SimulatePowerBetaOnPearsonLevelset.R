@@ -29,7 +29,7 @@ for(ii in seq_along(nsamples_loop)){
 
 
 
-    test <- runPowerNormalNull(rho = rho, N = nsamples,sampleN=10000, delta_vector = c(0.1), req_alpha = alpha)
+    test <- runPowerBetaNull(rho = rho, N = nsamples,shape = c(1.2,4.5),sampleN=1000, delta_vector = c(0.1), req_alpha = alpha)
     
 
     list_mat[ii] <- list(test)
