@@ -93,7 +93,7 @@ kCI.perm.test <- function(x, y, req_alpha) {
 
   t0res <- wCI:::KCI(as.numeric(x), as.numeric(y), 
                           as.numeric(length(x)), 
-                          psymmetric = 1L, pkern1 = -27.5512, pkern2 = 0.8000)
+                          psymmetric = 1L, pkern1 = -27.5512, pkern2 = 0.08000)
     t0 <- t0res[1]/(t0res[1] + t0res[2])
 
     sampleFun <- function(){
