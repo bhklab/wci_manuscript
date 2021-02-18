@@ -102,7 +102,7 @@ kCI.perm.test <- function(x, y, req_alpha) {
  
           tres <- wCI:::KCI(as.numeric(x), as.numeric(y), 
                           as.numeric(length(x)), 
-                          psymmetric = 1L, pkern1 = -27.5512, pkern2 = 0.8000)
+                          psymmetric = 1L, pkern1 = -27.5512, pkern2 = 0.08000)
           t <- tres[1]/(tres[1] + tres[2])
 
           return(abs(t-0.5) > abs(t0 - 0.5))
