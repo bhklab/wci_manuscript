@@ -4,7 +4,8 @@ fit_kci_kernel <- function(all_deltas, rep_deltas, make_plot=FALSE){
   delta_step <- max_delta/1000
   
   params <- list()
-  
+  RMSE <- list()
+
   # This approximates the CDF discretely, even for very large vectors:
   tcdf <- table(c(seq(0, max_delta, delta_step), ceiling((1/delta_step)*abs(all_deltas)) * delta_step)) - 1
   allcdf_int <- 1 - cumsum(tcdf)/sum(tcdf)
@@ -15,22 +16,71 @@ fit_kci_kernel <- function(all_deltas, rep_deltas, make_plot=FALSE){
   
   ## Fit Kernel
   #sigmodel <- nls(y~1/(1 + exp(-b * (x-c))), data=kervals[1:600,], start=list(b=20,c=0.2))
-  sigmodel <- nls(y~a/(1 + exp(-b * (x-c))), data=kervals, start=list(a=1, b=1, c=1), trace=FALSE, control=list(maxiter=500))
-  params[["sigmodel 3-param"]] <- coef(sigmodel)
-  sig3y <- predict(sigmodel, kervals$x)
+  sigFunOptim <- function(par, data) {
+    x <- data[,"x"]
+    y <- data[,"y"]
+    return(sum((y-par[[1]]/(1 + exp(-par[[2]] * (x-par[[3]]))))^2))
+  }
+  sigFunPred <- function(par, x) {
+    return(par[[1]]/(1 + exp(-par[[2]] * (x-par[[3]]))))
+  }
+
+
+  sigmodel <- optim(list(a=1, b=1, c=0),sigFunOptim,data=kervals)
+
+
+  params[["sigmodel 3-param"]] <- sigmodel$par
+  RMSE[["sigmodel 3-param"]] <- sqrt(sigmodel$value)
   
-  sigmodel2 <- nls(y~1/(1 + exp(-b * (x-c))), data=kervals, start=list(b=1, c=1), trace=FALSE, control=list(maxiter=500))
-  params[["sigmodel 2-param"]] <- coef(sigmodel2)
-  sig2y <- predict(sigmodel2, kervals$x)
+
+  sig3y <- sigFunPred(sigmodel$par, kervals$x)
   
-  expmodel <- nls(y ~ 1 - exp(-b*(x)), data=kervals, start=list(b=20), trace=FALSE, control=list(maxiter=100))
-  params[["exp 1-param"]] <- coef(expmodel)
-  exp1 <- predict(expmodel, kervals$x)
-  
-  expmodel2 <- nls(y ~ 1 - exp(-b*(x-c)), data=kervals, start=list(b=20,c=0), trace=FALSE, control=list(maxiter=100))
-  params[["exp 2-param"]] <- coef(expmodel2)
-  exp2 <- predict(expmodel2, kervals$x)
-  
+  sigFun2Optim <- function(par, data) {
+    x <- data[,"x"]
+    y <- data[,"y"]
+    return(sum((y-1/(1 + exp(-par[[1]] * (x-par[[2]]))))^2))
+  }
+  sigFun2Pred <- function(par, x) {
+    return(1/(1 + exp(-par[[1]] * (x-par[[2]]))))
+  }
+
+  sigmodel2 <- optim(list(b=1, c=0),sigFun2Optim,data=kervals)
+
+  params[["sigmodel 2-param"]] <- sigmodel2$par
+  sig2y <- sigFun2Pred(sigmodel2$par, kervals$x)
+  RMSE[["sigmodel 2-param"]] <- sqrt(sigmodel2$value)
+
+
+  expFunOptim <- function(par, data) {
+    x <- data[,"x"]
+    y <- data[,"y"]
+    return(sum((y-1 + exp(-par[[1]] * x))^2))
+  }
+  expFunPred <- function(par, x) {
+    return(1 - exp(-par[[1]] * x))
+  }
+
+
+  expmodel <- optim(list(b=1),expFunOptim,data=kervals)
+  params[["exp 1-param"]] <- expmodel$par
+  exp1 <- expFunPred(expmodel$par, kervals$x)
+  RMSE[["exp 1-param"]] <- sqrt(expmodel$value)
+
+
+  expFun2Optim <- function(par, data) {
+    x <- data[,"x"]
+    y <- data[,"y"]
+    return(sum((y-1 + exp(-par[[1]] * (x - par[[2]])))^2))
+  }
+  expFun2Pred <- function(par, x) {
+    return(1 - exp(-par[[1]] * (x - par[[2]])))
+  }
+
+  expmodel2 <- optim(list(b=1, c=0),expFun2Optim,data=kervals)
+  params[["exp 2-param"]] <- expmodel2$par
+  exp2 <- expFun2Pred(expmodel2$par, kervals$x)
+  RMSE[["exp 2-param"]] <- sqrt(expmodel2$value)
+
   if (make_plot){
     plot(kervals$x, kervals$y, col="black", type="l", lwd=3, xlab="Delta", ylab="Weight", main=" Fitted Kernel comparison")
     lines(kervals$x, sig2y, col="red", lty=2, lwd=2)
@@ -41,5 +91,5 @@ fit_kci_kernel <- function(all_deltas, rep_deltas, make_plot=FALSE){
            col=c("black", "red", "purple", "blue", "green"), lwd=c(2,2,2,2,2))
   }
   
-  params
+  return(list(params=params, RMSE=RMSE))
 }
