@@ -239,7 +239,7 @@ optfun <- function(s) {
 
 
 optfun <- function(s) {
-
+	
 	logprobs <- log(1/2/s) - abs(na.omit(all.replicates$deltaAAC))/s
 
 	maxVal <- max(logprobs)

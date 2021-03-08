@@ -6,7 +6,7 @@ library(mvtnorm)
 library(abind)
 library(doParallel)
 
-source("SimulatePowerBetawithNoise.R")
+source("SimulatePowerBetaWithNoise.R")
 
 alpha <- 0.001
 
