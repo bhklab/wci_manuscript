@@ -1,10 +1,6 @@
 
-library(fastCI)
-library(MASS)
-library(tictoc)
-library(doParallel)
-library(iterators)
-library(wCI)
+library(rmutil)
+
 library(data.table)
 pset.dir <- "PSets"
 library(PharmacoGx)
@@ -212,7 +208,7 @@ while(i < 7e5){
 	i2 <- sample(length(allAAC), 1)
 	while(i2 == i1) {i2 <- sample(length(allAAC), 1)}
 	random_pairs[i, ] <- c(allAAC[i1], allAAC[i2])
-	if(i %% 100) print(i)
+	if(i %% 10000) print(i)
 }
 write.csv(random_pairs, "random_pairs_aac.csv")
 
@@ -229,3 +225,55 @@ optimal_delta$f1[which.max(optimal_delta$f1[,2]),]
 source("fit_kci_kernel.R")
 
 fit_kci_kernel(na.omit(random_pairs[,1] - random_pairs[,2]), na.omit(all.replicates$deltaAAC), make_plot=TRUE)
+
+ecdfRep <- ecdf(na.omit(all.replicates$deltaAAC))
+
+optfun <- function(s) {
+
+	logprobs <- log(1/2/s) - abs(na.omit(all.replicates$deltaAAC))/s
+
+	maxVal <- max(logprobs)
+
+	return(maxVal+ log(sum(exp(logprobs - maxVal))))
+}
+
+
+optfun <- function(s) {
+
+	logprobs <- log(1/2/s) - abs(na.omit(all.replicates$deltaAAC))/s
+
+	maxVal <- max(logprobs)
+
+	return(sum(logprobs))
+}
+
+
+optfunG <- function(s) {
+
+	logprobs <- log(1/sqrt(2*pi)/s) - 0.5*(na.omit(all.replicates$deltaAAC)/s)^2
+
+	maxVal <- max(logprobs)
+
+	return(sum(logprobs))
+}
+
+
+optLaplacian <- optimise( optfun, c(0,100),maximum=TRUE)$maximum
+
+optGaussian <- optimise( optfunG, c(0,100),maximum=TRUE)$maximum
+
+plotX <- seq(-1,1,0.01)
+plot(ecdfRep)
+lines(plotX, pnorm(plotX, sd=optGaussian), col="red")
+lines(plotX, plaplace(plotX, s=optLaplacian), col="blue")
+
+
+
+plotX <- seq(-1,1,0.01)
+plot(density(na.omit(all.replicates$deltaAAC)))
+lines(plotX, dnorm(plotX, sd=optGaussian), col="red")
+lines(plotX, dlaplace(plotX, s=optLaplacian), col="blue")
+lines(plotX, dlaplace(plotX, s=mad(na.omit(all.replicates$deltaAAC))), col="green")
+
+
+print(optLaplacian)
