@@ -59,13 +59,13 @@ runPowerBetaNullNoise <- function(rho = 0.6, shape = c(1,10),
       truth <- rep(1, times=length(delta_vector))
       sample_mat <- rbivariateBeta(n = N, samplePars)
       
-      x <- pmax(pmin(ample_mat[,1] + rlaplace(nrow(sample_mat), 0, 0.05283715),1),0)
+      x <- pmax(pmin(sample_mat[,1] + rlaplace(nrow(sample_mat), 0, 0.05283715),1),0)
       y <- sample_mat[,2]
     } else {
       truth <- rep(0, times=length(delta_vector))
       sample_mat <- mvrnorm(n = N, mu = c(0,0), Sigma = nullSigma)
       
-      x <- pmax(pmin(ample_mat[,1] + rlaplace(nrow(sample_mat), 0, 0.05283715),1),0)
+      x <- pmax(pmin(sample_mat[,1] + rlaplace(nrow(sample_mat), 0, 0.05283715),1),0)
       y <- sample_mat[,2]
     }
     pearson_p_1 <- pearson.perm.test(x,y,req_alpha = req_alpha)$p.value
