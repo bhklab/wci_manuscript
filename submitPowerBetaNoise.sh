@@ -18,5 +18,5 @@ module load R
 
 cd ~/Github/wci_manuscript
 
-Rscript $HOME/Github/wci_manuscript/SimulatePowerBetaRuns.R
+Rscript $HOME/Github/wci_manuscript/SimulatePowerBetawithNoiseRuns.R
 
