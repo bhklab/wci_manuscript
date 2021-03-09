@@ -21,7 +21,7 @@ list_mat <- matrix(list(), nrow = length(exprho), ncol=length(nsamples_loop), di
 for(nsamples in nsamples_loop){
   for(erho in exprho){
     print(c(erho, nsamples))
-    test <- runPowerBetaNullNoise(rho = erho, N = nsamples, sampleN=1000, delta_vector = c(0, 0.13), req_alpha = alpha)
+    test <- runPowerBetaNullNoise(rho = erho, N = nsamples, sampleN=1000, delta_vector = c(0, 0.1), req_alpha = alpha)
 
 
     list_mat[as.character(erho), as.character(nsamples)] <- list(test)
@@ -41,7 +41,7 @@ list_mat <- matrix(list(), nrow = length(exprho), ncol=length(nsamples_loop), di
 for(nsamples in nsamples_loop){
   for(erho in exprho){
     print(c(erho, nsamples))
-    test <- runPowerBetaNullNoise(rho = erho, N = nsamples, shape = c(1.2, 4.5) ,sampleN=1000, delta_vector = c(0, 0.13), req_alpha = alpha)
+    test <- runPowerBetaNullNoise(rho = erho, N = nsamples, shape = c(1.2, 4.5) ,sampleN=1000, delta_vector = c(0, 0.1), req_alpha = alpha)
 
 
     list_mat[as.character(erho), as.character(nsamples)] <- list(test)
