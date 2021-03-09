@@ -16,21 +16,21 @@ registerDoParallel(40)
 
 
 
-exprho <- c(0.2, 0.3, 0.4)
-nsamples_loop <- c(100)
-list_mat <- matrix(list(), nrow = length(exprho), ncol=length(nsamples_loop), dimnames = list(exprho, nsamples_loop))
-if(file.exists("beta_1_2__4_5__dist_power_analysis_deltasearch.RData")) load("beta_1_2__4_5__dist_power_analysis_deltasearch.RData")
+# exprho <- c(0.2, 0.3, 0.4)
+# nsamples_loop <- c(100)
+# list_mat <- matrix(list(), nrow = length(exprho), ncol=length(nsamples_loop), dimnames = list(exprho, nsamples_loop))
+# if(file.exists("beta_1_2__4_5__dist_power_analysis_deltasearch.RData")) load("beta_1_2__4_5__dist_power_analysis_deltasearch.RData")
 
-for(nsamples in nsamples_loop){
-  for(erho in exprho){
-    print(c(erho, nsamples))
-    test <- runPowerBetaNull(rho = erho, N = nsamples, shape = c(1.2,4.5), sampleN=10000, delta_vector = seq(0,0.3, 0.05), req_alpha = alpha, withKCI = TRUE)
+# for(nsamples in nsamples_loop){
+#   for(erho in exprho){
+#     print(c(erho, nsamples))
+#     test <- runPowerBetaNull(rho = erho, N = nsamples, shape = c(1.2,4.5), sampleN=10000, delta_vector = seq(0,0.3, 0.05), req_alpha = alpha, withKCI = TRUE)
 
-    list_mat[as.character(erho), as.character(nsamples)] <- list(test)
-    save(list_mat, file="beta_1_2__4_5__dist_power_analysis_deltasearch.RData")
+#     list_mat[as.character(erho), as.character(nsamples)] <- list(test)
+#     save(list_mat, file="beta_1_2__4_5__dist_power_analysis_deltasearch.RData")
 
-  }
-}
+#   }
+# }
 
 
 
@@ -54,22 +54,22 @@ for(nsamples in nsamples_loop){
 
 
 
-#exprho <- seq(0.0, 0.5, .01)
-#nsamples_loop <- c(100)
-#list_mat <- matrix(list(), nrow = length(exprho), ncol=length(nsamples_loop), dimnames = list(exprho, nsamples_loop))
+exprho <- seq(0.0, 0.5, .01)
+nsamples_loop <- c(100)
+list_mat <- matrix(list(), nrow = length(exprho), ncol=length(nsamples_loop), dimnames = list(exprho, nsamples_loop))
 #if(file.exists("beta_1_2__4_5__dist_power_analysis_withkci.RData")) load("beta_1_2__4_5_dist_power_analysis_withkci.RData")
 #
-#for(nsamples in nsamples_loop){
-#  for(erho in exprho){
-#    print(c(erho, nsamples))
-#    test <- runPowerBetaNull(rho = erho, N = nsamples, sampleN=1000, shape = c(1.2, 4.5), delta_vector = c(0.13), req_alpha = alpha, withKCI = TRUE)
-#
-#
-#    list_mat[as.character(erho), as.character(nsamples)] <- list(test)
-#    save(list_mat, file="beta_1_2__4_5_dist_power_analysis_withkci.RData")
-#
-#   }
-#}
+for(nsamples in nsamples_loop){
+ for(erho in exprho){
+   print(c(erho, nsamples))
+   test <- runPowerBetaNull(rho = erho, N = nsamples, sampleN=10000, shape = c(1.2, 4.5), delta_vector = c(0.1), req_alpha = alpha, withKCI = TRUE)
+
+
+   list_mat[as.character(erho), as.character(nsamples)] <- list(test)
+   save(list_mat, file="beta_1_2__4_5_dist_power_analysis_withkci.RData")
+
+  }
+}
 
 
 # exprho <- seq(0, 0.5, .01)
