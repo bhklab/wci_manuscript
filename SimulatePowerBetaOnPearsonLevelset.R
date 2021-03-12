@@ -18,7 +18,7 @@ exprhos <- sapply(nsamples_loop, function(n) {
 list_mat <- list()
 
 
-if(file.exists("beta_dist_power_analysis_delta_0_1_fixed_pearson_power_0_5_large.RData")) load("beta_dist_power_analysis_delta_0_1_fixed_pearson_power_0_5_large.RData")
+# if(file.exists("beta_dist_power_analysis_delta_0_1_fixed_pearson_power_0_5_large.RData")) load("beta_dist_power_analysis_delta_0_1_fixed_pearson_power_0_5_large.RData")
 
 for(ii in seq_along(nsamples_loop)){
 
@@ -29,7 +29,7 @@ for(ii in seq_along(nsamples_loop)){
 
 
 
-    test <- runPowerBetaNull(rho = rho, N = nsamples,shape = c(1.2,4.5),sampleN=1000, delta_vector = c(0.1), req_alpha = alpha)
+    test <- runPowerBetaNull(rho = rho, N = nsamples,shape = c(1.2,4.5),sampleN=1000, delta_vector = c(0.1), req_alpha = alpha, withKCI=TRUE)
     
 
     list_mat[ii] <- list(test)

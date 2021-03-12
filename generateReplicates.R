@@ -277,3 +277,24 @@ lines(plotX, dlaplace(plotX, s=mad(na.omit(all.replicates$deltaAAC))), col="gree
 
 
 print(optLaplacian)
+
+
+
+
+# optBeta <- function(par){
+# 	return(sum(-dbeta(aac[aac>0], par[[1]], par[[2]], log=TRUE), na.rm=TRUE))
+# }
+
+
+# optim(list(1,2), optBeta)
+
+
+# optTN <- function(par){
+# 	return(sum(-log(dtruncnorm(aac[aac>0], 0,1, par[[1]], par[[2]])+.Machine$double.eps), na.rm=TRUE))
+# }
+
+
+# optim(list(0.1,3), optTN)
+
+
+

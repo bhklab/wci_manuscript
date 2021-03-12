@@ -67,10 +67,10 @@ MakePowerOverEffectPlot <- function(power_res, sampleSize, alpha = 0.001, delta=
 
 }
 
-MakePowerOverEffectPlotBeta <- function(power_res, sampleSize, alpha = 0.001, delta=0.13, fileName){
+MakePowerOverEffectPlotBeta <- function(power_res, sampleSize, alpha = 0.001, delta=0.1,  fileNamePrefix="", fileName){
 
 	if(missing(fileName)){
-		fileName = paste("power_plot_beta_n", sampleSize, "delta", delta, "_withKCI.pdf", sep="_")
+		fileName = paste("power_plot",fileNamePrefix,"beta_n", sampleSize, "delta", delta, "_withKCI.pdf", sep="_")
 	}
 	n50 <- power_res[,as.character(sampleSize)]
 
