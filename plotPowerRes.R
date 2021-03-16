@@ -627,27 +627,30 @@ MakePowerLevelSetBeta <- function(power_res, sampleSizes = c(100,150,200,250,300
 	}
 
 	n50_power <- lapply(n50, function(x) {
-	  x[,,2:6] <- apply(x[,,2:6, drop=FALSE], c(1,2,3), function(x) (as.numeric(x < alpha)))
+	  x[,,2:6] <- apply(x[,,2:6,drop=FALSE], c(1,2,3), function(x) (as.numeric(x < alpha)))
 	  powers <- sapply(dimnames(x)[[2]], function(xx){
 
 	      conf_mat_CI <- contingency_helper(x[,xx,"Alternative"],x[,xx,"CI_p"])
 	      conf_mat_rCI <- contingency_helper(x[,xx,"Alternative"],x[,xx,"rCI_p"])
 	      conf_mat_pearson <- contingency_helper(x[,xx,"Alternative"],x[,xx,"Pearson_p"])
 	      conf_mat_spearman <- contingency_helper(x[,xx,"Alternative"],x[,xx,"Spearman_p"])
+	      conf_mat_KCI <- contingency_helper(x[,xx,"Alternative"],x[,xx,"KCI_p"])
+
 	      # browser()
 	      pow_CI <- conf_mat_CI["1","1"]/sum(conf_mat_CI["1",])
 	      pow_rCI <- conf_mat_rCI["1","1"]/sum(conf_mat_rCI["1",])
 	      pow_pearson <- conf_mat_pearson["1","1"]/sum(conf_mat_pearson["1",])
 	      pow_spearman <- conf_mat_spearman["1","1"]/sum(conf_mat_spearman["1",])
-	      
-	      return(c("CI_power" = pow_CI, "rCI_power" = pow_rCI, "pearson_power" = pow_pearson, "spearman_power" = pow_spearman))
+	      pow_KCI <- conf_mat_KCI["1","1"]/sum(conf_mat_KCI["1",])
+
+	      return(c("CI" = pow_CI, "rCI" = pow_rCI, "Pearson" = pow_pearson, "Spearman" = pow_spearman, KCI = pow_KCI))
 	    })
 	  return(powers)
 	})
 
 	n50_power <- abind(n50_power, along = -1)
 	if(plotType == "percent"){
-		n50_power <- n50_power/n50_power[,"pearson_power",]
+		n50_power <- n50_power/n50_power[,"Pearson",]
 	}
 	# browser()
 	toPlot <- melt(n50_power)
@@ -661,7 +664,7 @@ MakePowerLevelSetBeta <- function(power_res, sampleSizes = c(100,150,200,250,300
 	  theme(axis.title = element_text(size=24), axis.text = element_text(size=24), legend.text = element_text(size=24), title = element_text(size=28),legend.key.height = unit(1.0, 'cm'))
 	
 	pdf(fileName, height = 6, width=9)
-	p <- ggplot(toPlot, aes(x=`Sample Size`, y=Power, col=`Method`)) + geom_line(size=1) + ggtitle(paste0("Power = ", powerLevel, ", Delta = 1, alpha = ", alpha)) + pres_ready 
+	p <- ggplot(toPlot, aes(x=`Sample Size`, y=Power, col=`Method`)) + geom_line(size=1) + ggtitle(paste0("Power = ", powerLevel, ", Delta = 0.1")) + pres_ready 
 	if(plotType == "percent"){
 		p <- p + ylab("% of Pearson Power") 
 	}
