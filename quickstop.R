@@ -43,7 +43,7 @@ log_denom <- function(suc, total, p){
 #'                      (1/req_alpha)*100. 
 #' @param log_decision_boundary Can be interpereted as the log10 of the odds ratio between the two pairs of hypotheses 
 #'                              (p less than req_alpha or not, and p greater than  req_alpha*(1+tolerance_par)) at which the algorithm stops. 
-#'                              In effect, if the algorithm return a significant result, we have a 10^(-lDB) probability of that being a false positive. 
+#'                              In effect, if the algorithm return a significant result, we have a e^(-lDB) probability of that being a false positive. 
 #' @param max_iter A maximum number of iterations after which this algorithm quits. Here to take into account the very rare case that the real p value falls
 #'                 into the in-decision region. Defaults to 1/(req_alpha)*100 
 quickstop <- function(sample_function, req_alpha=0.05, tolerance_par = req_alpha*0.001, log_decision_boundary = 10, max_iter = 1/req_alpha*100){

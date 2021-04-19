@@ -176,7 +176,7 @@ MakePowerOverEffectPlotWithKendall <- function(power_res, sampleSize, alpha = 0.
 	      pow_spearman <- conf_mat_spearman["1","1"]/sum(conf_mat_spearman["1",])
   	      pow_kendall <- conf_mat_kendall["1","1"]/sum(conf_mat_kendall["1",])
 
-	      return(c("CI_power" = pow_CI, "rCI_power" = pow_rCI, "pearson_power" = pow_pearson, "spearman_power" = pow_spearman, "kendall_power" = pow_kendall))
+	      return(c("CI" = pow_CI, "rCI" = pow_rCI, "Pearson" = pow_pearson, "Spearman" = pow_spearman, "Kendall" = pow_kendall))
 	    })
 	  return(powers)
 	})
@@ -245,7 +245,7 @@ MakePowerOverDeltaPlot <- function(power_res, sampleSize, effectSize, alpha = 0.
 	      pow_pearson <- conf_mat_pearson["1","1"]/sum(conf_mat_pearson["1",])
 	      pow_spearman <- conf_mat_spearman["1","1"]/sum(conf_mat_spearman["1",])
 	      
-	      return(c("CI_power" = pow_CI, "rCI_power" = pow_rCI, "pearson_power" = pow_pearson, "spearman_power" = pow_spearman))
+	      return(c("CI" = pow_CI, "rCI" = pow_rCI, "Pearson" = pow_pearson, "Spearman" = pow_spearman))
 	    })
 	  return(powers)
 	})
@@ -368,7 +368,7 @@ MakePowerOverDeltaPlotWithKendall <- function(power_res, sampleSize, effectSize,
 	      pow_spearman <- conf_mat_spearman["1","1"]/sum(conf_mat_spearman["1",])
   	      pow_kendall <- conf_mat_kendall["1","1"]/sum(conf_mat_kendall["1",])
 
-	      return(c("CI_power" = pow_CI, "rCI_power" = pow_rCI, "pearson_power" = pow_pearson, "spearman_power" = pow_spearman, "kendall_power" = pow_kendall))
+	      return(c("CI" = pow_CI, "rCI" = pow_rCI, "Pearson" = pow_pearson, "Spearman" = pow_spearman, "kendall_power" = pow_kendall))
 	    })
 	  return(powers)
 	})
@@ -426,7 +426,7 @@ MakePowerOverDeltaColorEffectPlot <- function(power_res, sampleSize, effectSize,
 	      pow_pearson <- conf_mat_pearson["1","1"]/sum(conf_mat_pearson["1",])
 	      pow_spearman <- conf_mat_spearman["1","1"]/sum(conf_mat_spearman["1",])
 	      
-	      return(c("CI_power" = pow_CI, "rCI_power" = pow_rCI, "pearson_power" = pow_pearson, "spearman_power" = pow_spearman))
+	      return(c("CI" = pow_CI, "rCI" = pow_rCI, "Pearson" = pow_pearson, "Spearman" = pow_spearman))
 	    })
 	  return(powers)
 	})
@@ -562,14 +562,14 @@ MakePowerLevelSet <- function(power_res, sampleSizes = c(50,100,150,200,250,300)
 	      pow_pearson <- conf_mat_pearson["1","1"]/sum(conf_mat_pearson["1",])
 	      pow_spearman <- conf_mat_spearman["1","1"]/sum(conf_mat_spearman["1",])
 	      
-	      return(c("CI_power" = pow_CI, "rCI_power" = pow_rCI, "pearson_power" = pow_pearson, "spearman_power" = pow_spearman))
+	      return(c("CI" = pow_CI, "rCI" = pow_rCI, "Pearson" = pow_pearson, "Spearman" = pow_spearman))
 	    })
 	  return(powers)
 	})
 
 	n50_power <- abind(n50_power, along = -1)
 	if(plotType == "percent"){
-		n50_power <- n50_power/n50_power[,"pearson_power",]
+		n50_power <- n50_power/n50_power[,"Pearson",]
 	}
 	# browser()
 	toPlot <- melt(n50_power)
@@ -602,7 +602,7 @@ MakePowerLevelSetBeta <- function(power_res, sampleSizes = c(100,150,200,250,300
 	require(pwr)
 	plotType <- match.arg(plotType)
 	if(missing(fileName)){
-		fileName = paste("power_plot_beta_levelset", plotType, ".pdf", sep="_")
+		fileName = paste("power_plot_beta_levelset_", powerLevel, plotType, ".pdf", sep="_")
 	}
 
 

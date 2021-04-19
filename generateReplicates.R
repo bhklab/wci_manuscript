@@ -30,6 +30,15 @@ allAAC <- allAAC[!is.na(allAAC)]
 write.csv(allAAC, file="allAACs.csv")
 
 
+pdf("allAACDist.pdf", width=7, height=7)
+plotX <- seq(-1,1,0.01)
+# plot(density(na.omit(all.replicates$deltaAAC)))
+par(cex=1.2)
+hist(allAAC,breaks=50,probability=T,xlab="AAC", main="", border=NULL)
+# lines(plotX, dlaplace(plotX, s=mad(na.omit(all.replicates$deltaAAC))), col="green")
+dev.off()
+
+
 
 
 
@@ -228,14 +237,6 @@ fit_kci_kernel(na.omit(random_pairs[,1] - random_pairs[,2]), na.omit(all.replica
 
 ecdfRep <- ecdf(na.omit(all.replicates$deltaAAC))
 
-optfun <- function(s) {
-
-	logprobs <- log(1/2/s) - abs(na.omit(all.replicates$deltaAAC))/s
-
-	maxVal <- max(logprobs)
-
-	return(maxVal+ log(sum(exp(logprobs - maxVal))))
-}
 
 
 optfun <- function(s) {
@@ -273,11 +274,21 @@ plotX <- seq(-1,1,0.01)
 plot(density(na.omit(all.replicates$deltaAAC)))
 lines(plotX, dnorm(plotX, sd=optGaussian), col="red")
 lines(plotX, dlaplace(plotX, s=optLaplacian), col="blue")
-lines(plotX, dlaplace(plotX, s=mad(na.omit(all.replicates$deltaAAC))), col="green")
+# lines(plotX, dlaplace(plotX, s=mad(na.omit(all.replicates$deltaAAC))), col="green")
 
 
 print(optLaplacian)
 
+pdf("deltaAACDist.pdf", width=7, height=7)
+plotX <- seq(-1,1,0.01)
+# plot(density(na.omit(all.replicates$deltaAAC)))
+par(cex=1.2)
+hist(na.omit(all.replicates$deltaAAC),breaks=150,probability=T,xlab="Delta AAC", main="", border=NULL)
+lines(plotX, dnorm(plotX, sd=optGaussian), col="red", lwd=3)
+lines(plotX, dlaplace(plotX, s=optLaplacian), col="blue", lwd=3)
+legend("topleft", legend=c("Gaussian Fit", "Laplace Fit"),fill=c("red", "blue"))
+# lines(plotX, dlaplace(plotX, s=mad(na.omit(all.replicates$deltaAAC))), col="green")
+dev.off()
 
 
 

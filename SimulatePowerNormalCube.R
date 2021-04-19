@@ -12,73 +12,75 @@ library(iterators)
 library(mvtnorm)
 library(abind)
 library(doParallel)
-
 source("quickstop.R")
-source("bivariateBeta.R")
 source("perm_test_funs.R")
 
-alpha <- 0.001
 
 
-#' Simulate Power of CI at differentiating bivariate beta nulls and alternates 
+
+#' Simulate Power of CI at differentiating bivariate normal nulls and alternates on noised data
 #' 
 #' This code runs with a doParallel backend. Please set one up prior 
 #' to running code. 
 #' 
-#' @param rho the expected alternate pearson
-#' @param shape the shape parameters for the marginals (currently symetric)
+#' @param noise the noise added to X^3
 #' @param N Sample size for samples from null or alt
 #' @param sampleN How many times to resample/simulate
-#' @param delta_vector Vector of delta values for rCI 
+#' @param delta If missing, then equal to noise added. Otherwise, a numeric value should be provided
 #' @param propTrue If only interested in power, can set to 1 for all to be Alternates. Otherwise, can investigate FDR as well. 
-runPowerBetaNull <- function(rho = 0.6, shape = c(1,10),
-                           N = 50, 
+runPowerNormalCubic <- function(noise,#exp_CI = 0.6, 
+                           Ns = c(100), 
                            sampleN = 1000, 
-                           delta_vector = seq(0, 1, by = .05), 
-                           propTrue=1, req_alpha=0.001,
-                           withKCI = FALSE){
+                           delta, 
+                           propTrue=1, req_alpha=0.001){
+  # tau = 2*exp_CI - 1
+  # rho <- sin((pi*tau)/(2))
   
-  samplePars <- optimizeShapeForPearson(rho, shape, shape)
-
-  
-
-  res <- foreach(i = seq_len(sampleN), 
-                 .export=c("delta_vector", "nullSigma", "altSigma", "propTrue", "N", "req_alpha", "samplePars")) %dopar% {
+  if(missing(delta)) {
+    delta <- "noise"
+  }
+  combineFun <- function(...) return(abind(..., along = -1))
+  res <- foreach(noise = noise) %:% foreach(N = Ns, .final = combineFun) %:% foreach(i = seq_len(sampleN), .final = combineFun,
+                 .export=c("delta_vector", "nullSigma", "altSigma", "propTrue", "N", "req_alpha")) %dopar% {
     # if(i %% 10 == 0){print(i)}
     suppressMessages(require(MASS, quietly = TRUE, warn.conflicts = FALSE))
     require(wCI, quietly = TRUE, warn.conflicts = FALSE)
-    require(rmutil, quietly = TRUE, warn.conflicts = FALSE)
+
+    if(delta == "noise"){
+      delta_vector <- noise
+    } else {
+      delta_vector <- delta
+    }
+
+
+
     ci_p <- numeric(length(delta_vector))
     mci_p <- numeric(length(delta_vector))
     pearson_p <- numeric(length(delta_vector))
-    kci_p <- numeric(length(delta_vector))
     
     
     spearman_p <- numeric(length(delta_vector))
-    
+    kendall_p <- numeric(length(delta_vector))
+
+    if(N >=500){
+      rCI.perm.test <- rCI.perm.test.large
+    }
+
     if(runif(1) < propTrue){
       truth <- rep(1, times=length(delta_vector))
-      sample_mat <- rbivariateBeta(n = N, samplePars)
-      
-      x <- sample_mat[,1]
-      y <- sample_mat[,2]
+
+      x <- rnorm(N)
+      y <- x^3+rnorm(N,0,noise)
     } else {
       truth <- rep(0, times=length(delta_vector))
-      sample_mat <- mvrnorm(n = N, mu = c(0,0), Sigma = nullSigma)
-      stop("Not Implemented")
-      x <- sample_mat[,1]
-      y <- sample_mat[,2]
+      
+      x <- rnorm(N)
+      y <- rnorm(N)^3+rnorm(N,0,noise)
     }
     pearson_p_1 <- pearson.perm.test(x,y,req_alpha = req_alpha)$p.value
     spearman_p_1 <- cor.test(x, y, method="spearman")$p.value
+    kendall_p_1 <- cor.test(x,y, method="kendall")$p.value
     ci_p_1 <- rCI.perm.test(x, y, 0, req_alpha)$p.value
-    if(withKCI){
-      kci_p_1 <- kCI.perm.test(x,y, req_alpha)$p.value
-
-    } else {
-      kci_p_1 <- NA_real_ 
-    }
-
     for(j in seq_along(delta_vector)){
       sgm <- delta_vector[j]
       if(diff(range(x)) <= sgm || diff(range(y)) <= sgm){
@@ -90,17 +92,22 @@ runPowerBetaNull <- function(rho = 0.6, shape = c(1,10),
       
       
       ci_p[j] <- ci_p_1
-      kci_p[j] <- kci_p_1
+
       pearson_p[j] <- pearson_p_1
       spearman_p[j] <- spearman_p_1
+      kendall_p[j] <- kendall_p_1
+
       
     }
 
 
-    res <- cbind(truth, ci_p, mci_p, kci_p, pearson_p, spearman_p)
-    colnames(res) <- c("Alternative", "CI_p", "rCI_p", "KCI_p", "Pearson_p", "Spearman_p")
+    res <- cbind(truth, ci_p, mci_p, pearson_p, spearman_p, kendall_p)
+    colnames(res) <- c("Alternative", "CI_p", "rCI_p", "Pearson_p", "Spearman_p", "Kendall_p")
     rownames(res) <- delta_vector
     res
   }
+
+
+
   return(res)
 }
