@@ -192,7 +192,6 @@ gCSI.replicates <- data.table(data.frame(drug_cell, paired_aacs))
 # # rm(AZ)
 
 
-
 ### Make plot per drug first
 
 all.replicates <- rbindlist(list(GRAY2017.replicates, GDSCv2.replicates, CTRPv2.replicates, gCSI.replicates))
@@ -224,6 +223,19 @@ write.csv(random_pairs, "random_pairs_aac.csv")
 source("optimize_delta.R")
 library(Hmisc)
 optimal_delta <- optimize_delta(all.replicates$deltaAAC, random_pairs[,1] - random_pairs[,2])
+
+
+## calculating delta for CTRPv2 separately. 
+CTRPv2.replicates.2 <- CTRPv2.replicates
+colnames(CTRPv2.replicates.2) <- c("Dataset", "Cell Line", "Drug", "AAC1", "AAC2")
+CTRPv2.replicates.2[,deltaAAC := AAC1 - AAC2]
+
+optimal_delta_ctrp <- optimize_delta(CTRPv2.replicates.2$deltaAAC, random_pairs[,1] - random_pairs[,2])
+
+optimal_delta_ctrp$mcc[which.max(optimal_delta_ctrp$mcc[,2]),]
+
+optimal_delta_ctrp$f1[which.max(optimal_delta_ctrp$f1[,2]),]
+
 
 
 optimal_delta$mcc[which.max(optimal_delta$mcc[,2]),]
