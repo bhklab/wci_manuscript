@@ -15,7 +15,8 @@ test$col = densCols(test$x, test$y, colramp = colorRampPalette(c("#2b8cbe", "#00
 p <- ggplot(as.data.frame(test), aes(x,y, color=col)) + geom_point(alpha=0.5) + theme_bw() + 
 theme(axis.text = element_text(size=14), axis.title=element_text(size=18), legend.position="none")
 
-pdf("bivariateBeta_1_2__4_5.pdf", width=5, height=5)
-ggMarginal(p)
+pdf("/results/bivariateBeta_1_2__4_5.pdf", width=5, height=5)
+p <- ggMarginal(p)
+print(p)
 dev.off()
 
