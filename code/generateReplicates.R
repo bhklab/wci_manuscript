@@ -2,7 +2,7 @@
 library(rmutil)
 
 library(data.table)
-pset.dir <- "PSets"
+pset.dir <- "data/PSets"
 library(PharmacoGx)
 
 # ## Loading in drug sensitivity data to serve as test cases
