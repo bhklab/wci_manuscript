@@ -51,10 +51,11 @@ MakePowerOverEffectPlot <- function(power_res, sampleSize, alpha = 0.001, delta=
 	colnames(toPlot) <- c("Effect Size", "Method", "Power")
 
 	pres_ready <- theme_bw() + 
-	  theme(axis.title = element_text(size=24), axis.text = element_text(size=24), legend.text = element_text(size=24), title = element_text(size=28),legend.key.height = unit(1.0, 'cm'))
+	  theme(axis.title = element_text(size=20), axis.text = element_text(size=20), legend.text = element_text(size=20), title = element_text(size=26),legend.key.height = unit(1.0, 'cm'))
 
 	pdf(fileName, height = 6, width=9)
-	p <- ggplot(toPlot, aes(x=`Effect Size`, y=Power, col=Method)) + geom_line(size=1) + ggtitle(paste0("N=", sampleSize, ", Delta = ",delta,", alpha = ", alpha)) + 
+	p <- ggplot(toPlot, aes(x=`Effect Size`, y=Power, col=Method, linetype=Method)) + geom_line(size=1) + 
+	ggtitle(paste0("N=", sampleSize, "; Delta = ",delta,"; alpha = ", alpha)) + 
 				pres_ready + theme(
 								    legend.position = c(0.05, 0.95),
 								    legend.justification = c("left", "top"),
@@ -118,10 +119,11 @@ MakePowerOverEffectPlotBeta <- function(power_res, sampleSize, alpha = 0.001, de
 	colnames(toPlot) <- c("Effect Size", "Method", "Power")
 
 	pres_ready <- theme_bw() + 
-	  theme(axis.title = element_text(size=24), axis.text = element_text(size=24), legend.text = element_text(size=24), title = element_text(size=28),legend.key.height = unit(1.0, 'cm'))
+	  theme(axis.title = element_text(size=20), axis.text = element_text(size=20), 
+	  	legend.text = element_text(size=20), title = element_text(size=26),legend.key.height = unit(1.0, 'cm'))
 
 	pdf(fileName, height = 6, width=9)
-	p <- ggplot(toPlot, aes(x=`Effect Size`, y=Power, col=Method)) + geom_line(size=1) + ggtitle(paste0("N=", sampleSize, ", Delta = ",delta,", alpha = ", alpha)) + 
+	p <- ggplot(toPlot, aes(x=`Effect Size`, y=Power, col=Method, linetype=Method)) + geom_line(size=1) + ggtitle(paste0("N=", sampleSize, ", Delta = ",delta,", alpha = ", alpha)) + 
 				pres_ready + theme(
 								    legend.position = c(0.05, 0.95),
 								    legend.justification = c("left", "top"),
@@ -187,7 +189,7 @@ MakePowerOverEffectPlotWithKendall <- function(power_res, sampleSize, alpha = 0.
 	colnames(toPlot) <- c("Effect Size", "Method", "Power")
 
 	pres_ready <- theme_bw() + 
-	  theme(axis.title = element_text(size=24), axis.text = element_text(size=24), legend.text = element_text(size=24), title = element_text(size=28),legend.key.height = unit(1.0, 'cm'))
+	  theme(axis.title = element_text(size=20), axis.text = element_text(size=20), legend.text = element_text(size=20), title = element_text(size=26),legend.key.height = unit(1.0, 'cm'))
 
 	pdf(fileName, height = 6, width=9)
 	p <- ggplot(toPlot, aes(x=`Effect Size`, y=Power, col=Method)) + geom_line(size=1) + ggtitle(paste0("N=", sampleSize, " Delta = ",delta,", alpha = ", alpha)) + pres_ready
@@ -207,7 +209,6 @@ MakePowerOverEffectPlotWithKendall <- function(power_res, sampleSize, alpha = 0.
 }
 
 
-#TODO:: actually implement this
 MakePowerOverDeltaPlot <- function(power_res, sampleSize, effectSize, alpha = 0.001,  fileName){
 
 	if(missing(fileName)){
@@ -256,10 +257,13 @@ MakePowerOverDeltaPlot <- function(power_res, sampleSize, effectSize, alpha = 0.
 	colnames(toPlot) <- c("Method", "Delta", "Power")
 
 	pres_ready <- theme_bw() + 
-	  theme(axis.title = element_text(size=24), axis.text = element_text(size=24), legend.text = element_text(size=24), title = element_text(size=28),legend.key.height = unit(1.0, 'cm'))
+	  theme(axis.title = element_text(size=20), 
+	  	axis.text = element_text(size=20), legend.text = element_text(size=20), 
+	  	title = element_text(size=26),legend.key.height = unit(1.0, 'cm'))
 
 	pdf(fileName, height = 6, width=9)
-	p <- ggplot(toPlot, aes(x=`Delta`, y=Power, col=Method)) + geom_line(size=1) + ggtitle(paste0("N=", sampleSize, " Effect Size = ",effectSize,", alpha = ", alpha)) + pres_ready
+	p <- ggplot(toPlot, aes(x=`Delta`, y=Power, col=Method, linetype=Method)) + geom_line(size=1) + 
+	ggtitle(paste0("N=", sampleSize, "; Effect Size = ",effectSize,"; alpha = ", alpha)) + pres_ready
 	print(p)	
 	dev.off()
 
@@ -317,7 +321,7 @@ MakePowerOverDeltaPlotBeta <- function(power_res, sampleSize, effectSize, alpha 
 	colnames(toPlot) <- c("Method", "Delta", "Power")
 
 	pres_ready <- theme_bw() + 
-	  theme(axis.title = element_text(size=24), axis.text = element_text(size=24), legend.text = element_text(size=24), title = element_text(size=28),legend.key.height = unit(1.0, 'cm'))
+	  theme(axis.title = element_text(size=20), axis.text = element_text(size=20), legend.text = element_text(size=20), title = element_text(size=26),legend.key.height = unit(1.0, 'cm'))
 
 	pdf(fileName, height = 6, width=9)
 	p <- ggplot(toPlot, aes(x=`Delta`, y=Power, col=Method)) + geom_line(size=1) + ggtitle(paste0("N=", sampleSize, " Effect Size = ",effectSize,", alpha = ", alpha)) + pres_ready
@@ -379,7 +383,7 @@ MakePowerOverDeltaPlotWithKendall <- function(power_res, sampleSize, effectSize,
 	colnames(toPlot) <- c("Method", "Delta", "Power")
 
 	pres_ready <- theme_bw() + 
-	  theme(axis.title = element_text(size=24), axis.text = element_text(size=24), legend.text = element_text(size=24), title = element_text(size=28),legend.key.height = unit(1.0, 'cm'))
+	  theme(axis.title = element_text(size=20), axis.text = element_text(size=20), legend.text = element_text(size=20), title = element_text(size=26),legend.key.height = unit(1.0, 'cm'))
 
 	pdf(fileName, height = 6, width=9)
 	p <- ggplot(toPlot, aes(x=`Delta`, y=Power, col=Method)) + geom_line(size=1) + ggtitle(paste0("N=", sampleSize, " Effect Size = ",effectSize,", alpha = ", alpha)) + pres_ready
@@ -433,17 +437,19 @@ MakePowerOverDeltaColorEffectPlot <- function(power_res, sampleSize, effectSize,
 
 	n50_power <- abind(n50_power, along = -1)
 	# browser()
-	toPlot <- melt(n50_power[,"rCI_power",])
+	toPlot <- melt(n50_power[,"rCI",])
 	# browser()
 	colnames(toPlot) <- c("Effect Size", "Delta", "Power")
 	toPlot[,"Effect Size"] <- as.character(toPlot[,"Effect Size"])
 	toPlot <- data.table(toPlot)
 	toPlot[,Power := Power/max(Power), .(`Effect Size`)]
 	pres_ready <- theme_bw() + 
-	  theme(axis.title = element_text(size=24), axis.text = element_text(size=24), legend.text = element_text(size=24), title = element_text(size=28),legend.key.height = unit(1.0, 'cm'))
+	  theme(axis.title = element_text(size=20), axis.text = element_text(size=20), 
+	  	legend.text = element_text(size=20), title = element_text(size=26),legend.key.height = unit(1.0, 'cm'))
 
 	pdf(fileName, height = 6, width=9)
-	p <- ggplot(toPlot, aes(x=`Delta`, y=Power, col=`Effect Size`)) + geom_line(size=1) + ggtitle(paste0("N=", sampleSize, ", alpha = ", alpha)) + pres_ready + ylab("Power as % of max power")
+	p <- ggplot(toPlot, aes(x=`Delta`, y=Power, col=`Effect Size`)) + geom_line(size=1) + 
+	ggtitle(paste0("N=", sampleSize, "; alpha = ", alpha)) + pres_ready + ylab("Power as % of max power")
 	print(p)	
 	dev.off()
 
@@ -506,7 +512,7 @@ MakePowerOverDeltaBetaColorEffectPlot <- function(power_res, sampleSize, effectS
 	toPlot <- data.table(toPlot)
 	toPlot[,Power := Power/max(Power), .(`Effect Size`)]
 	pres_ready <- theme_bw() + 
-	  theme(axis.title = element_text(size=24), axis.text = element_text(size=24), legend.text = element_text(size=24), title = element_text(size=28),legend.key.height = unit(1.0, 'cm'))
+	  theme(axis.title = element_text(size=20), axis.text = element_text(size=20), legend.text = element_text(size=20), title = element_text(size=26),legend.key.height = unit(1.0, 'cm'))
 
 	pdf(fileName, height = 6, width=9)
 	p <- ggplot(toPlot, aes(x=`Delta`, y=Power, col=`Effect Size`)) + geom_line(size=1) + ggtitle(paste0("N=", sampleSize, ", alpha = ", alpha)) + pres_ready + ylab("Power as % of max power")
@@ -518,7 +524,6 @@ MakePowerOverDeltaBetaColorEffectPlot <- function(power_res, sampleSize, effectS
 
 
 
-#TODO:: actually implement this
 MakePowerLevelSet <- function(power_res, sampleSizes = c(50,100,150,200,250,300), 
 							  powerLevel = 0.5, alpha = 0.001, plotType= c("percent", "nominal"), fileName){
 	require(pwr)
@@ -580,10 +585,12 @@ MakePowerLevelSet <- function(power_res, sampleSizes = c(50,100,150,200,250,300)
 
 
 	pres_ready <- theme_bw() + 
-	  theme(axis.title = element_text(size=24), axis.text = element_text(size=24), legend.text = element_text(size=24), title = element_text(size=28),legend.key.height = unit(1.0, 'cm'))
+	  theme(axis.title = element_text(size=20), axis.text = element_text(size=20), 
+	  	legend.text = element_text(size=20), title = element_text(size=26),legend.key.height = unit(1.0, 'cm'))
 	
 	pdf(fileName, height = 6, width=9)
-	p <- ggplot(toPlot, aes(x=`Sample Size`, y=Power, col=`Method`)) + geom_line(size=1) + ggtitle(paste0("Power = ", powerLevel, ", Delta = 1, alpha = ", alpha)) + pres_ready 
+	p <- ggplot(toPlot, aes(x=`Sample Size`, y=Power, col=`Method`, linetype=Method)) + geom_line(size=1) + 
+	ggtitle(paste0("Power = ", powerLevel, "; Delta = 1; alpha = ", alpha)) + pres_ready 
 	if(plotType == "percent"){
 		p <- p + ylab("% of Pearson Power") 
 	}
@@ -661,7 +668,8 @@ MakePowerLevelSetBeta <- function(power_res, sampleSizes = c(100,150,200,250,300
 
 
 	pres_ready <- theme_bw() + 
-	  theme(axis.title = element_text(size=24), axis.text = element_text(size=24), legend.text = element_text(size=24), title = element_text(size=28),legend.key.height = unit(1.0, 'cm'))
+	  theme(axis.title = element_text(size=20), axis.text = element_text(size=20), 
+	  	legend.text = element_text(size=20), title = element_text(size=26),legend.key.height = unit(1.0, 'cm'))
 	
 	pdf(fileName, height = 6, width=9)
 	p <- ggplot(toPlot, aes(x=`Sample Size`, y=Power, col=`Method`)) + geom_line(size=1) + ggtitle(paste0("Power = ", powerLevel, ", Delta = 0.1")) + pres_ready 
