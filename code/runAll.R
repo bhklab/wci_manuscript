@@ -32,7 +32,7 @@ load("/data/results/beta_dist_power_analysis_delta_0_1_fixed_pearson_power_0_5_l
 MakePowerLevelSetBeta(list_mat, fileName = "/results/figure_s3c.pdf")
 
   load("/data/results/beta_dist_power_analysis_delta_0_1_fixed_pearson_power_0_25_large.RData")
-MakePowerLevelSetBeta(list_mat, fileName = "/results/figure_s3d.pdf")
+MakePowerLevelSetBeta(list_mat, powerLevel = 0.25, fileName = "/results/figure_s3d.pdf")
 
 load("/data/results/beta_1_2__4_5_dist_power_analysis_withkci_withnoise.RData")
 
