@@ -4,3 +4,4 @@
 PSets
 *.csv
 /data/
+.Rproj.user
