@@ -1,7 +1,19 @@
-# hash:sha256:a28e8ca10739afd20443b8f30efb338f867ca3076f6dceb45d7227db249f4598
+# hash:sha256:6e270042f603a99f370c1b52d44e52086d93688972fb0d331a1a458781aa2430
 FROM registry.codeocean.com/codeocean/r-base:4.0.3-ubuntu18.04
 
 ARG DEBIAN_FRONTEND=noninteractive
+
+RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys \
+        0xAD2323F17326AE31401037733E05EBFF05441C52 \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends software-properties-common \
+    && add-apt-repository -y 'deb http://deb.codeocean.com/rstudio-server-bionic/ ubuntu main' \
+    && apt-get purge -y --autoremove software-properties-common \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends \
+        pandoc=1.19.2.4~dfsg-1build4 \
+        rstudio-server=1.2.5033 \
+    && rm -rf /var/lib/apt/lists/*
 
 RUN Rscript -e 'remotes::install_version("MCMCpack", "1.6-0")' \
     && Rscript -e 'remotes::install_version("abind", "1.4-5")' \
