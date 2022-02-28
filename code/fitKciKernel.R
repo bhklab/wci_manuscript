@@ -1,5 +1,5 @@
 
-fit_kci_kernel <- function(all_deltas, rep_deltas, make_plot=FALSE){
+fitKciKernel <- function(all_deltas, rep_deltas, make_plot=FALSE){
   max_delta <- max(abs(all_deltas), abs(rep_deltas))*1.001
   delta_step <- max_delta/1000
   

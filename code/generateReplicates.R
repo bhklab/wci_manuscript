@@ -243,9 +243,9 @@ optimal_delta$mcc[which.max(optimal_delta$mcc[,2]),]
 optimal_delta$f1[which.max(optimal_delta$f1[,2]),]
 
 
-source("fit_kci_kernel.R")
+source("fitKciKernel.R")
 
-fit_kci_kernel(na.omit(random_pairs[,1] - random_pairs[,2]), na.omit(all.replicates$deltaAAC), make_plot=TRUE)
+fitKciKernel(na.omit(random_pairs[,1] - random_pairs[,2]), na.omit(all.replicates$deltaAAC), make_plot=TRUE)
 
 ecdfRep <- ecdf(na.omit(all.replicates$deltaAAC))
 
